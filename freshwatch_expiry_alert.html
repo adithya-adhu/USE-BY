@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FreshWatch — Expiry Alert</title>
+<style>
+:root{--ink:#20352e;--muted:#718078;--green:#477b62;--mint:#eaf3ed;--cream:#faf9f4;--line:#e6e9e2;--white:#fff;--red:#b94b4b;--amber:#a66c1e;--shadow:0 12px 35px rgba(38,61,48,.08)}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}.nav{max-width:1120px;margin:auto;padding:17px 24px;display:flex;align-items:center;justify-content:space-between}.brand{font-weight:800;font-size:22px;letter-spacing:-.7px}.brand span{color:var(--green)}.brand small{display:block;font-size:10px;letter-spacing:2px;color:var(--muted);font-weight:600;margin-top:1px}.navtag{font-size:12px;color:var(--green);background:var(--mint);padding:8px 12px;border-radius:30px;font-weight:700}
+main{max-width:1120px;margin:34px auto;padding:0 24px 60px}.hero{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:26px}.eyebrow{color:var(--green);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase}.hero h1{font-size:clamp(28px,4vw,42px);letter-spacing:-1.5px;margin:8px 0}.hero p{color:var(--muted);margin:0;max-width:550px;line-height:1.6}.today{font-size:13px;color:var(--muted);white-space:nowrap}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:26px 0}.stat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 19px;box-shadow:var(--shadow)}.stat .label{font-size:12px;color:var(--muted);font-weight:600}.stat .num{font-size:29px;font-weight:800;margin-top:7px;letter-spacing:-1px}.stat .hint{font-size:11px;color:var(--muted);margin-top:2px}.stat.warn .num{color:var(--amber)}.stat.danger .num{color:var(--red)}
+.layout{display:grid;grid-template-columns:340px 1fr;gap:18px;align-items:start}.panel{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}.form-panel{padding:22px;position:sticky;top:88px}.panel h2{font-size:17px;margin:0 0 5px;letter-spacing:-.3px}.sub{font-size:12px;color:var(--muted);margin:0 0 19px}.field{margin-bottom:13px}.field label{display:block;font-size:12px;font-weight:700;margin-bottom:6px}.field input,.field select{width:100%;border:1px solid #dfe5de;border-radius:10px;padding:11px 12px;font:inherit;font-size:13px;background:#fff;color:var(--ink);outline:none}.field input:focus,.field select:focus{border-color:var(--green);box-shadow:0 0 0 3px #477b621c}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{border:0;border-radius:10px;padding:12px 15px;font-weight:750;font-size:13px;cursor:pointer;transition:.18s}.btn-primary{background:var(--green);color:#fff;width:100%}.btn-primary:hover{background:#38664f;transform:translateY(-1px)}.btn-light{background:var(--mint);color:var(--green)}.btn-small{padding:7px 10px;font-size:11px}.form-note{font-size:10px;color:var(--muted);line-height:1.5;margin:12px 0 0}
+.list-panel{padding:21px}.list-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:17px}.list-head h2{margin:0}.tools{display:flex;gap:9px;flex-wrap:wrap}.search{border:1px solid var(--line);border-radius:10px;padding:9px 11px;font:inherit;font-size:12px;min-width:180px;outline:none}.filter{border:1px solid var(--line);border-radius:10px;padding:9px 10px;background:white;color:var(--ink);font:inherit;font-size:12px}.alert{display:none;padding:12px 14px;background:#fff5e8;border:1px solid #f2dfc2;border-radius:12px;color:#80551d;font-size:12px;margin-bottom:15px;line-height:1.5}.alert.show{display:block}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;text-align:left;min-width:570px}th{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:11px 9px;border-bottom:1px solid var(--line)}td{padding:14px 9px;border-bottom:1px solid #f0f1ed;font-size:12px}tbody tr:last-child td{border-bottom:0}.product{font-weight:750;font-size:13px}.category{font-size:10px;color:var(--muted);margin-top:3px}.badge{display:inline-block;border-radius:30px;padding:5px 8px;font-size:10px;font-weight:800;white-space:nowrap}.safe{background:#eaf3ed;color:#477b62}.soon{background:#fff2dc;color:#9b641c}.expired{background:#fbe9e8;color:#b94b4b}.actions{display:flex;gap:5px}.action{border:1px solid var(--line);background:white;border-radius:7px;padding:6px 8px;font-size:10px;cursor:pointer;color:var(--ink)}.action:hover{background:var(--mint)}.empty{text-align:center;padding:44px 12px;color:var(--muted);font-size:13px}.empty strong{display:block;color:var(--ink);font-size:15px;margin-bottom:5px}.footer{text-align:center;color:#9aa39c;font-size:10px;margin-top:23px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,20px);opacity:0;background:#20352e;color:white;padding:11px 17px;border-radius:30px;font-size:12px;transition:.25s;pointer-events:none;z-index:10}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.form-panel{position:static}.stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.nav{padding:14px 17px}main{padding:0 15px 40px;margin-top:25px}.hero{display:block}.today{margin-top:12px}.stats{gap:9px}.stat{padding:14px}.stat .num{font-size:25px}.list-panel{padding:15px}.list-head{align-items:flex-start;flex-direction:column}.tools{width:100%}.search{flex:1;min-width:0}.row{gap:8px}}
+</style>
+</head>
+<body>
+<header><div class="nav"><div class="brand">Fresh<span>Watch</span><small>LESS WASTE. MORE AWARENESS.</small></div><div class="navtag">✦ EXPIRY ALERT</div></div></header>
+<main>
+  <section class="hero">
+    <div><div class="eyebrow">Your little freshness assistant</div><h1>Keep track. Stay fresh.</h1><p>One simple place to track expiry dates of groceries, medicines and everyday essentials — before they go to waste.</p></div>
+    <div class="today" id="today"></div>
+  </section>
+  <section class="stats">
+    <div class="stat"><div class="label">Total items</div><div class="num" id="total">0</div><div class="hint">In your inventory</div></div>
+    <div class="stat warn"><div class="label">Expiring soon</div><div class="num" id="soonCount">0</div><div class="hint">Within the next 7 days</div></div>
+    <div class="stat danger"><div class="label">Already expired</div><div class="num" id="expiredCount">0</div><div class="hint">Check these items</div></div>
+    <div class="stat"><div class="label">Fresh items</div><div class="num" id="freshCount">0</div><div class="hint">More than 7 days left</div></div>
+  </section>
+  <section class="layout">
+    <aside class="panel form-panel">
+      <h2 id="formTitle">＋ Add an item</h2><p class="sub">Enter the details to start tracking.</p>
+      <form id="itemForm">
+        <div class="field"><label for="name">Item name *</label><input id="name" required maxlength="60" placeholder="e.g. Milk, Paracetamol"></div>
+        <div class="row">
+          <div class="field"><label for="category">Category</label><select id="category"><option>Food</option><option>Medicine</option><option>Skincare</option><option>Household</option><option>Other</option></select></div>
+          <div class="field"><label for="quantity">Quantity</label><input id="quantity" maxlength="20" placeholder="e.g. 2 packs"></div>
+        </div>
+        <div class="field"><label for="expiry">Expiry date *</label><input id="expiry" type="date" required></div>
+        <div class="field"><label for="notes">Notes (optional)</label><input id="notes" maxlength="100" placeholder="e.g. Keep refrigerated"></div>
+        <button class="btn btn-primary" id="submitBtn" type="submit">Add to my list</button>
+        <button class="btn btn-light" id="cancelEdit" type="button" style="display:none;width:100%;margin-top:8px">Cancel editing</button>
+      </form>
+      <p class="form-note">Your list is saved in this browser on this device using local storage. No account is needed.</p>
+    </aside>
+    <section class="panel list-panel">
+      <div class="list-head"><div><h2>Your inventory</h2><p class="sub" style="margin:5px 0 0">A quick look at everything you're tracking.</p></div><div class="tools"><input class="search" id="search" placeholder="Search items…"><select class="filter" id="filter"><option value="all">All items</option><option value="soon">Expiring soon</option><option value="expired">Expired</option><option value="fresh">Fresh</option></select></div></div>
+      <div class="alert" id="alertBox"></div>
+      <div class="table-wrap"><table><thead><tr><th>Item</th><th>Expiry date</th><th>Time left</th><th>Status</th><th>Actions</th></tr></thead><tbody id="itemRows"></tbody></table></div>
+      <div class="empty" id="empty" style="display:none"><strong>No items found</strong>Add an item or change your search/filter.</div>
+    </section>
+  </section>
+  <div class="footer">FreshWatch · A simple mini-project for a fresher, less wasteful routine.</div>
+</main>
+<div class="toast" id="toast"></div>
+<script>
+const KEY='freshwatch_items_v1';
+let items=JSON.parse(localStorage.getItem(KEY)||'[]');
+let editingId=null;
+const $=id=>document.getElementById(id);
+const today=new Date(); today.setHours(0,0,0,0);
+$('today').textContent=new Intl.DateTimeFormat('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(today);
+function dayDiff(date){const d=new Date(date+'T00:00:00');return Math.round((d-today)/86400000)}
+function status(item){const n=dayDiff(item.expiry);return n<0?'expired':n<=7?'soon':'fresh'}
+function dateText(s){return new Intl.DateTimeFormat('en-IN',{day:'numeric',month:'short',year:'numeric'}).format(new Date(s+'T00:00:00'))}
+function leftText(n){if(n<0)return `${Math.abs(n)} day${Math.abs(n)===1?'':'s'} ago`;if(n===0)return 'Today';return `${n} day${n===1?'':'s'} left`}
+function save(){localStorage.setItem(KEY,JSON.stringify(items));render()}
+function toast(msg){$('toast').textContent=msg;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2200)}
+function render(){
+ const counts={total:items.length,soon:0,expired:0,fresh:0};
+ items.forEach(i=>counts[status(i)]++);
+ $('total').textContent=counts.total;$('soonCount').textContent=counts.soon;$('expiredCount').textContent=counts.expired;$('freshCount').textContent=counts.fresh;
+ const alertItems=items.filter(i=>status(i)!=='fresh');
+ $('alertBox').classList.toggle('show',alertItems.length>0);
+ $('alertBox').textContent=alertItems.length?`⚠ You have ${counts.expired} expired item(s) and ${counts.soon} item(s) expiring within 7 days. Check the list below.`:'';
+ const q=$('search').value.toLowerCase(),f=$('filter').value;
+ const filtered=items.filter(i=>(i.name+' '+i.category+' '+(i.notes||'')).toLowerCase().includes(q)&&(f==='all'||status(i)===f)).sort((a,b)=>a.expiry.localeCompare(b.expiry));
+ $('itemRows').innerHTML=filtered.map(i=>{const s=status(i),n=dayDiff(i.expiry);return `<tr><td><div class="product">${escapeHtml(i.name)}</div><div class="category">${escapeHtml(i.category)}${i.quantity?' · '+escapeHtml(i.quantity):''}</div></td><td>${dateText(i.expiry)}</td><td>${leftText(n)}</td><td><span class="badge ${s}">${s==='expired'?'Expired':s==='soon'?'Expiring soon':'Fresh'}</span></td><td><div class="actions"><button class="action" onclick="editItem('${i.id}')">Edit</button><button class="action" onclick="deleteItem('${i.id}')">Delete</button></div></td></tr>`}).join('');
+ $('empty').style.display=filtered.length?'none':'block';
+}
+function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+$('itemForm').addEventListener('submit',e=>{
+ e.preventDefault();const data={name:$('name').value.trim(),category:$('category').value,quantity:$('quantity').value.trim(),expiry:$('expiry').value,notes:$('notes').value.trim()};
+ if(!data.name||!data.expiry)return;
+ if(editingId){items=items.map(i=>i.id===editingId?{...i,...data}:i);toast('Item updated successfully.')}
+ else{items.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),...data});toast('Item added to your list.')}
+ resetForm();save();
+});
+function editItem(id){const i=items.find(x=>x.id===id);if(!i)return;editingId=id;$('name').value=i.name;$('category').value=i.category;$('quantity').value=i.quantity||'';$('expiry').value=i.expiry;$('notes').value=i.notes||'';$('formTitle').textContent='✎ Edit item';$('submitBtn').textContent='Save changes';$('cancelEdit').style.display='block';window.scrollTo({top:0,behavior:'smooth'})}
+function deleteItem(id){const i=items.find(x=>x.id===id);if(!i||!confirm(`Delete "${i.name}" from your list?`))return;items=items.filter(x=>x.id!==id);if(editingId===id)resetForm();save();toast('Item deleted.')}
+function resetForm(){editingId=null;$('itemForm').reset();$('formTitle').textContent='＋ Add an item';$('submitBtn').textContent='Add to my list';$('cancelEdit').style.display='none'}
+$('cancelEdit').addEventListener('click',resetForm);$('search').addEventListener('input',render);$('filter').addEventListener('change',render);
+render();
+</script>
+</body>
+</html>
